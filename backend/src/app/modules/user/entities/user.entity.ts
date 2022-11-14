@@ -29,7 +29,7 @@ export class User extends BaseEntity {
   @Column({
     name: 'refresh_token',
     type: 'varchar',
-    length: 20,
+    length: 1000,
     nullable: true,
   })
   refreshToken: string;

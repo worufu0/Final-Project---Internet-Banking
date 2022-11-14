@@ -12,6 +12,6 @@ const dbConfig: TypeOrmModuleOptions = {
   database: process.env.RDS_DATABASE,
   entities: [path.join(__dirname, '../..', '/**/*.entity{.ts,.js}')],
   logging: process.env.NODE_ENV === 'e2e' ? ['info', 'log'] : 'all',
-  synchronize: false, // Don't use it on production, It will sync entity and modify your database to match with entity
+  synchronize: true, // Don't use it on production, It will sync entity and modify your database to match with entity
 };
 export default dbConfig;

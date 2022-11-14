@@ -8,6 +8,8 @@ import { CreateUserDto, LoginInput } from './dto/create-user.dto';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
+import { SALT_ROUNDS } from '../../../configs/constants/auth';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -16,6 +18,17 @@ export class UserService {
     private accountRepository: AccountRepository,
     private jwtService: JwtService,
   ) {}
+
+  /**
+   * encode password
+   * @param password
+   * @returns
+   */
+  async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(SALT_ROUNDS);
+    return await bcrypt.hash(password, salt);
+  }
+
   async createUser(createUserDto: CreateUserDto) {
     const checkUser = await this.userRepository.findOne({
       where: {
@@ -25,6 +38,7 @@ export class UserService {
     if (checkUser) {
       throw new HttpException('User already exists', HttpStatus.OK);
     }
+    createUserDto.password = await this.hashPassword(createUserDto.password);
     const user = await this.userRepository.save(createUserDto);
     await this.accountRepository.save([
       {
@@ -133,7 +147,6 @@ export class UserService {
     const userDb = await this.validateUser(user.username, user.password);
     const payloadToken = {
       username: userDb.username,
-      role: userDb.role,
       userId: userDb.id,
     };
     const accessToken = this.getAccessToken(payloadToken);

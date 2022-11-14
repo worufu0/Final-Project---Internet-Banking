@@ -8,12 +8,15 @@ import {
   Delete,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, LoginInput } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserAuth } from '../../../vendors/guards/auth.guard';
+import { Request } from 'express';
+import { User } from './entities/user.entity';
 
 @ApiTags('User')
 @Controller('user')
