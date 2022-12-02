@@ -22,7 +22,7 @@ export class Receiver extends BaseEntity {
     name: 'account_number',
     nullable: false,
   })
-  accountType: string;
+  accountNumber: string;
 
   @Column({
     name: 'reminiscent_name',

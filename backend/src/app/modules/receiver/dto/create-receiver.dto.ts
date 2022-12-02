@@ -1,1 +1,4 @@
-export class CreateReceiverDto {}
+export class CreateReceiverDto {
+  accountNumber: string;
+  reminiscentName: string;
+}

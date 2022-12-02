@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 // Check if username in field for query matches authenticated user's username
 // or if the user is admin
 @Injectable()
-export class UserAuth extends AuthGuard('jwt') {
+export class UserGuard extends AuthGuard('jwt') {
   constructor(private jwtService: JwtService) {
     super();
   }

@@ -12,18 +12,17 @@ import {
 import { ReceiverService } from './receiver.service';
 import { CreateReceiverDto } from './dto/create-receiver.dto';
 import { UpdateReceiverDto } from './dto/update-receiver.dto';
-import { UserAuth } from '../../../vendors/guards/auth.guard';
+import { UserGuard } from '../../../vendors/guards/auth.guard';
 import { User } from '../user/entities/user.entity';
 
 @Controller('receiver')
 export class ReceiverController {
   constructor(private readonly receiverService: ReceiverService) {}
 
-  @UseGuards(UserAuth)
+  @UseGuards(UserGuard)
   @Post('saveRecipient')
-  async saveRecipient(@Req() request, @Body() input) {
-    const user = request.auth as User;
-    this.receiverService.saveRecipient(user, input);
-    return user;
+  async saveRecipient(@Req() request, @Body() receive: CreateReceiverDto) {
+    const auth = request.auth as User;
+    return this.receiverService.saveRecipient(auth, receive);
   }
 }

@@ -14,7 +14,7 @@ import { UserService } from './user.service';
 import { CreateUserDto, LoginInput } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserAuth } from '../../../vendors/guards/auth.guard';
+import { UserGuard } from '../../../vendors/guards/auth.guard';
 import { Request } from 'express';
 import { User } from './entities/user.entity';
 
@@ -90,7 +90,7 @@ export class UserController {
     return await this.userService.createUser(createUserDto);
   }
 
-  @UseGuards(UserAuth)
+  @UseGuards(UserGuard)
   @Get('getListAccount')
   getListAccount(@Query() inputQuery) {
     return this.userService.getListAccount(inputQuery);
