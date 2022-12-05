@@ -30,6 +30,8 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
+    const { email, phone, fullname, password } = createUserDto;
+    console.log(email);
     const checkUser = await this.userRepository.findOne({
       where: {
         email: createUserDto.email,
@@ -39,7 +41,13 @@ export class UserService {
       throw new HttpException('User already exists', HttpStatus.OK);
     }
     createUserDto.password = await this.hashPassword(createUserDto.password);
-    const user = await this.userRepository.save(createUserDto);
+    const user = await this.userRepository.save({
+      email,
+      phone,
+      fullname,
+      password: await this.hashPassword(password),
+    });
+    console.log(user);
     await this.accountRepository.save([
       {
         accountType: AccountType.PaymentAccount,
@@ -96,7 +104,12 @@ export class UserService {
     // compare encode password with old password
     const passwordMatched = bcrypt.compareSync(password, user.password);
     if (passwordMatched) {
-      return { username: user.email, id: user.id, role: user };
+      return {
+        username: user.email,
+        id: user.id,
+        fullname: user.fullname,
+        role: user,
+      };
     }
     throw new HttpException(
       {
@@ -147,7 +160,8 @@ export class UserService {
     const userDb = await this.validateUser(user.username, user.password);
     const payloadToken = {
       username: userDb.username,
-      userId: userDb.id,
+      fullname: userDb.fullname,
+      id: userDb.id,
     };
     const accessToken = this.getAccessToken(payloadToken);
     const refreshToken = this.getRefreshToken(payloadToken);

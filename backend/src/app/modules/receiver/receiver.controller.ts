@@ -25,4 +25,25 @@ export class ReceiverController {
     const auth = request.auth as User;
     return this.receiverService.saveRecipient(auth, receive);
   }
+
+  @UseGuards(UserGuard)
+  @Get('getListRecipient')
+  async getListRecipient(@Req() request) {
+    const auth = request.auth as User;
+    return this.receiverService.getListRecipient(auth);
+  }
+
+  @UseGuards(UserGuard)
+  @Post('updateRecipient')
+  async updateRecipient(@Req() request, @Body() receive: CreateReceiverDto) {
+    const auth = request.auth as User;
+    return this.receiverService.updateRecipient(auth, receive);
+  }
+
+  @UseGuards(UserGuard)
+  @Delete('deleteRecipient')
+  async deleteRecipient(@Req() request, @Body() receive: CreateReceiverDto) {
+    const auth = request.auth as User;
+    return this.receiverService.deleteRecipient(auth, receive.accountNumber);
+  }
 }

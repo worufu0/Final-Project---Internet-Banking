@@ -6,15 +6,20 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   OneToMany,
+  Unique,
 } from 'typeorm';
 import { Account } from '../../account/entities/account.entity';
+import { OtpTransaction } from '../../account/entities/otp.entity';
 
 @Entity('users')
+@Unique(['email'])
+@Unique(['phone'])
+@Unique('UQ_USER', ['email', 'phone'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('increment', { name: 'id' })
   id: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
+  @Column({ type: 'varchar', length: 255, nullable: false })
   email: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
@@ -39,6 +44,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Account, (account) => account.user)
   accounts: Account[];
+
+  @OneToMany(() => OtpTransaction, (otp) => otp.user)
+  otps: OtpTransaction[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

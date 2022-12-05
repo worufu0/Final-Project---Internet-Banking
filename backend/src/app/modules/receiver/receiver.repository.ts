@@ -10,15 +10,19 @@ export class ReceiverRepository extends Repository<Receiver> {
     super(Receiver, dataSource.manager);
   }
 
-  async saveRecipient(auth: User, inputReceiver: CreateReceiverDto) {
-    // const receiver = new Receiver();
-    // receiver.userId = auth.id;
-    // receiver.reminiscentName = inputReceiver.reminiscentName;
-    // receiver.accountNumber = inputReceiver.accountNumber;
+  async saveRecipient(userId: number, inputReceiver: CreateReceiverDto) {
     return await this.save({
-      userId: auth.id,
+      userId,
       accountNumber: inputReceiver.accountNumber,
       reminiscentName: inputReceiver.reminiscentName,
     });
+  }
+
+  async findReceiverExists(userId: number, accountNumber: string) {
+    return this.findOneBy({ userId, accountNumber });
+  }
+
+  async getListRecipient(userId: number) {
+    return this.findBy({ userId });
   }
 }
