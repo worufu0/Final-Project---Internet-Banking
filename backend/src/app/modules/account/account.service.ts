@@ -2,7 +2,9 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { OtpType } from 'src/configs/enum/otp';
+import { TransactionType } from '../../../configs/enum/transaction-type';
 import { generateOTP } from '../../../app/utils/genarate-otp';
+import { TransactionHistoryRepository } from '../transaction-history/transaction-history.repository';
 import { User } from '../user/entities/user.entity';
 import { AccountRepository } from './account.repository';
 import { CreateTransaction } from './dto/create-transaction.dto';
@@ -14,6 +16,7 @@ export class AccountService {
   constructor(
     private otpTransactionRepository: OtpTransactionRepository,
     private accountRepository: AccountRepository,
+    private transactionHistoryRepository: TransactionHistoryRepository,
     private mailService: MailerService,
   ) {}
   async createTransaction(auth: User, inputTransaction: CreateTransaction) {
@@ -42,9 +45,9 @@ export class AccountService {
       );
     }
 
-    const beneficiary = await this.accountRepository.findOneBy({
+    const beneficiary = await this.accountRepository.findAccountByAccountNumber(
       accountNumber,
-    });
+    );
 
     if (!beneficiary) {
       throw new HttpException(
@@ -55,10 +58,15 @@ export class AccountService {
 
     accountCurrent.blance -= cash;
     beneficiary.blance += cash;
-
     await Promise.all([
       this.accountRepository.save(accountCurrent),
       this.accountRepository.save(beneficiary),
+      this.transactionHistoryRepository.createTransactionHistory(
+        auth.id,
+        beneficiary.user.id,
+        TransactionType.TRANSFERS,
+        cash,
+      ),
     ]);
 
     return {

@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Account } from '../../account/entities/account.entity';
 import { OtpTransaction } from '../../account/entities/otp.entity';
+import { TransactionHistory } from '../../transaction-history/entities/transaction-history.entity';
 
 @Entity('users')
 @Unique(['email'])
@@ -47,6 +48,18 @@ export class User extends BaseEntity {
 
   @OneToMany(() => OtpTransaction, (otp) => otp.user)
   otps: OtpTransaction[];
+
+  @OneToMany(
+    () => TransactionHistory,
+    (transactionHistory) => transactionHistory.from,
+  )
+  from: TransactionHistory[];
+
+  @OneToMany(
+    () => TransactionHistory,
+    (transactionHistory) => transactionHistory.to,
+  )
+  to: TransactionHistory[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

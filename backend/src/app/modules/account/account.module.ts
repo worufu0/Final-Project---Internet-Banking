@@ -4,10 +4,10 @@ import { AccountController } from './account.controller';
 import { AccountRepository } from './account.repository';
 import { JwtService } from '@nestjs/jwt';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { google } from 'googleapis';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import * as path from 'path';
 import { OtpTransactionRepository } from './otp.repository';
+import { TransactionHistoryRepository } from '../transaction-history/transaction-history.repository';
 
 @Module({
   imports: [
@@ -30,6 +30,7 @@ import { OtpTransactionRepository } from './otp.repository';
     AccountService,
     AccountRepository,
     OtpTransactionRepository,
+    TransactionHistoryRepository,
     JwtService,
   ],
 })
