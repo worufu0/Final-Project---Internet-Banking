@@ -1,10 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '../user/entities/user.entity';
 import { ReceiverRepository } from './receiver.repository';
 import { CreateReceiverDto } from './dto/create-receiver.dto';
-import { UpdateReceiverDto } from './dto/update-receiver.dto';
 import { AccountRepository } from '../account/account.repository';
-import { Receiver } from './entities/receiver.entity';
+import { BaseException } from '../../../vendors/exceptions/base.exception';
 
 @Injectable()
 export class ReceiverService {
@@ -19,7 +18,12 @@ export class ReceiverService {
       await this.accountRepository.findAccountByAccountNumber(accountNumber);
 
     if (!queryReceiver) {
-      throw new HttpException('Account not exists', HttpStatus.BAD_REQUEST);
+      throw new BaseException(
+        'ACCOUNT_NOT_EXISTS',
+        'Account not exists',
+        null,
+        HttpStatus.OK,
+      );
     }
 
     const receiverExists = await this.receiverRepository.findReceiverExists(
@@ -28,7 +32,12 @@ export class ReceiverService {
     );
 
     if (receiverExists) {
-      throw new HttpException('Receiver exists', HttpStatus.OK);
+      throw new BaseException(
+        'RECEIVER_EXISTS',
+        'Receiver exists',
+        null,
+        HttpStatus.OK,
+      );
     }
 
     const newReceiver: CreateReceiverDto = {
@@ -51,7 +60,12 @@ export class ReceiverService {
       accountNumber,
     );
     if (!receiverExists) {
-      throw new HttpException('Receiver not exists', HttpStatus.OK);
+      throw new BaseException(
+        'RECEIVER_NOT_EXISTS',
+        'Receiver not exists',
+        null,
+        HttpStatus.OK,
+      );
     }
     receiverExists.reminiscentName = reminiscentName;
     return await this.receiverRepository.save(receiverExists);

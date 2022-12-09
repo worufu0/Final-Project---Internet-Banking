@@ -13,16 +13,27 @@ import { UserGuard } from '../../../vendors/guards/auth.guard';
 import { User } from '../user/entities/user.entity';
 import { AccountService } from './account.service';
 import { CreateTransaction } from './dto/create-transaction.dto';
+import { BaseController } from '../../../vendors/base/base.controller';
 
 @Controller('account')
-export class AccountController {
-  constructor(private readonly accountService: AccountService) {}
+export class AccountController extends BaseController {
+  constructor(private readonly accountService: AccountService) {
+    super();
+  }
 
   @UseGuards(UserGuard)
   @Post('createTransaction')
-  transaction(@Req() request, @Body() inputTransaction: CreateTransaction) {
+  async transaction(
+    @Req() request,
+    @Body() inputTransaction: CreateTransaction,
+  ) {
     const auth = request.auth as User;
-    return this.accountService.createTransaction(auth, inputTransaction);
+    console.log('beng beng');
+    const data = await this.accountService.createTransaction(
+      auth,
+      inputTransaction,
+    );
+    return this.response(data);
   }
 
   @UseGuards(UserGuard)

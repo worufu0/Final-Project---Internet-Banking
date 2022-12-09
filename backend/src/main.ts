@@ -3,6 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { Logger } from './common/logger/logger';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './vendors/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -19,6 +20,8 @@ async function bootstrap() {
   SwaggerModule.setup('', app, document);
 
   app.enableCors();
+  app.useGlobalFilters(new HttpExceptionFilter());
+
   const port = parseInt(process.env.APP_PORT, 10) || 3000;
   await app.listen(port, '0.0.0.0', () => {
     new Logger().log(`Service started successfully at port: ${port}`);

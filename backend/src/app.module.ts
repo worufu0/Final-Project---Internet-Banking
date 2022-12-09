@@ -17,6 +17,7 @@ import { TransactionHistoryModule } from './app/modules/transaction-history/tran
 import { ConfigModule } from '@nestjs/config';
 import { Logger } from './common/logger/logger';
 import dbConfig from './configs/db/mySql';
+import { BaseException } from './vendors/exceptions/base.exception';
 
 @Module({
   imports: [
@@ -37,7 +38,11 @@ export class AppModule implements NestModule, OnModuleInit {
   }
   async init() {
     process.on('unhandledRejection', (reason) => {
-      throw new HttpException('unhandledRejection', 400);
+      throw new BaseException(
+        'unhandledRejection',
+        'Unhandled Rejection',
+        reason,
+      );
     });
     new Logger().log(`${AppModule.name} init`);
   }

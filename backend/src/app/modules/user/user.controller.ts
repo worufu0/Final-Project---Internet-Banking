@@ -17,11 +17,14 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserGuard } from '../../../vendors/guards/auth.guard';
 import { Request } from 'express';
 import { User } from './entities/user.entity';
+import { BaseController } from '../../../vendors/base/base.controller';
 
 @ApiTags('User')
 @Controller('user')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+export class UserController extends BaseController {
+  constructor(private readonly userService: UserService) {
+    super();
+  }
 
   @ApiOperation({ summary: 'API Đăng nhập' })
   @ApiBody({
@@ -87,12 +90,12 @@ export class UserController {
 
   @Post('createUser')
   async createUser(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.createUser(createUserDto);
+    return this.response(await this.userService.createUser(createUserDto));
   }
 
   @UseGuards(UserGuard)
   @Get('getListAccount')
-  getListAccount(@Query() inputQuery) {
-    return this.userService.getListAccount(inputQuery);
+  async getListAccount(@Query() inputQuery) {
+    return this.response(await this.userService.getListAccount(inputQuery));
   }
 }

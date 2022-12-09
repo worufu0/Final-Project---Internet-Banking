@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { TransactionHistoryRepository } from './transaction-history.repository';
 
 @Injectable()

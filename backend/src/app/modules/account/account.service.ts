@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { OtpType } from 'src/configs/enum/otp';
 import { TransactionType } from '../../../configs/enum/transaction-type';
@@ -10,6 +10,7 @@ import { AccountRepository } from './account.repository';
 import { CreateTransaction } from './dto/create-transaction.dto';
 import { OtpTransaction } from './entities/otp.entity';
 import { OtpTransactionRepository } from './otp.repository';
+import { BaseException } from '../../../vendors/exceptions/base.exception';
 
 @Injectable()
 export class AccountService {
@@ -27,9 +28,13 @@ export class AccountService {
     );
 
     if (!otpTransactions) {
-      throw new HttpException('Mã OTP không hợp lệ', HttpStatus.OK);
+      throw new BaseException(
+        'OTP_INVALID',
+        'Mã OTP không hợp lệ',
+        null,
+        HttpStatus.FORBIDDEN,
+      );
     }
-
     await this.otpTransactionRepository.remove(otpTransactions);
 
     const accountCurrent = await this.accountRepository.findOneBy({
@@ -39,9 +44,11 @@ export class AccountService {
     });
 
     if (accountCurrent.blance < cash) {
-      throw new HttpException(
+      throw new BaseException(
+        'CASH_INVALID',
         'Số dư không đủ thể thực hiện giao dịch',
-        HttpStatus.OK,
+        null,
+        HttpStatus.FORBIDDEN,
       );
     }
 
@@ -50,8 +57,10 @@ export class AccountService {
     );
 
     if (!beneficiary) {
-      throw new HttpException(
+      throw new BaseException(
+        'ACCOUNT_NUMBER_INVALID',
         'Số tài khoản người thụ hưởng không tồn tại',
+        null,
         HttpStatus.OK,
       );
     }
@@ -68,10 +77,7 @@ export class AccountService {
         cash,
       ),
     ]);
-
-    return {
-      message: 'Transaction successfully',
-    };
+    return 'Transaction successfully';
   }
 
   async getOtp(auth) {

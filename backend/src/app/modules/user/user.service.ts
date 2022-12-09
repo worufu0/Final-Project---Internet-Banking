@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { USER_ERRORS } from '../../../configs/constants/error-code';
 import { AccountType } from '../../../configs/enum/account';
@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
 import { SALT_ROUNDS } from '../../../configs/constants/auth';
 import { User } from './entities/user.entity';
+import { BaseException } from '../../../vendors/exceptions/base.exception';
 
 @Injectable()
 export class UserService {
@@ -38,7 +39,12 @@ export class UserService {
       },
     });
     if (checkUser) {
-      throw new HttpException('User already exists', HttpStatus.OK);
+      throw new BaseException(
+        'USER_EXISTS',
+        'User đã tồn tại',
+        null,
+        HttpStatus.OK,
+      );
     }
     createUserDto.password = await this.hashPassword(createUserDto.password);
     const user = await this.userRepository.save({
@@ -47,7 +53,6 @@ export class UserService {
       fullname,
       password: await this.hashPassword(password),
     });
-    console.log(user);
     await this.accountRepository.save([
       {
         accountType: AccountType.PaymentAccount,
@@ -93,11 +98,10 @@ export class UserService {
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.userRepository.findByEmail(username);
     if (!user) {
-      throw new HttpException(
-        {
-          code: USER_ERRORS.USER_NOT_FOUND.code,
-          message: USER_ERRORS.USER_NOT_FOUND.message,
-        },
+      throw new BaseException(
+        USER_ERRORS.USER_NOT_FOUND.code,
+        USER_ERRORS.USER_NOT_FOUND.message,
+        null,
         HttpStatus.FORBIDDEN,
       );
     }
@@ -111,11 +115,10 @@ export class UserService {
         role: user,
       };
     }
-    throw new HttpException(
-      {
-        code: USER_ERRORS.WRONG_PASSWORD.code,
-        message: USER_ERRORS.WRONG_PASSWORD.message,
-      },
+    throw new BaseException(
+      USER_ERRORS.WRONG_PASSWORD.code,
+      USER_ERRORS.WRONG_PASSWORD.message,
+      null,
       HttpStatus.FORBIDDEN,
     );
   }
