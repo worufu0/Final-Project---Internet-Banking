@@ -1,10 +1,12 @@
 import {
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { EmployeeRole } from '../../configs/enum/employee-role';
 
 // Check if username in field for query matches authenticated user's username
 // or if the user is admin
@@ -22,8 +24,11 @@ export class EmployeeGuard extends AuthGuard('jwt') {
         expiresIn: process.env.JWT_EXPIRE_TIME,
       };
       this.jwtService.verify(token, options);
-      const user = this.jwtService.decode(token);
-      request.auth = user;
+      const auth = this.jwtService.decode(token);
+      request.auth = auth;
+      if (auth['role'] !== EmployeeRole.EMPLOYEEE) {
+        throw new ForbiddenException();
+      }
       return super.canActivate(context);
     } catch (error) {
       throw new UnauthorizedException();

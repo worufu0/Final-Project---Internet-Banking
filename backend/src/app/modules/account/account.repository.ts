@@ -9,7 +9,7 @@ export class AccountRepository extends Repository<Account> {
   }
 
   async findAccountByAccountNumber(accountNumber: string) {
-    return this.findOne({
+    return await this.findOne({
       where: {
         accountNumber,
       },
@@ -17,5 +17,10 @@ export class AccountRepository extends Repository<Account> {
         user: true,
       },
     });
+  }
+
+  async addCash(account: Account, cash: number) {
+    account.blance += cash;
+    return await this.save(account);
   }
 }

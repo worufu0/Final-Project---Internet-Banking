@@ -98,4 +98,16 @@ export class UserController extends BaseController {
   async getListAccount(@Query() inputQuery) {
     return this.response(await this.userService.getListAccount(inputQuery));
   }
+
+  @Post('loginEmployee')
+  async loginEmployee(@Body() loginInput: LoginInput) {
+    const { accessToken, refreshToken } = await this.userService.loginEmployee(
+      loginInput,
+    );
+    return {
+      accessToken,
+      refreshToken,
+      tokenType: 'Bearer',
+    };
+  }
 }

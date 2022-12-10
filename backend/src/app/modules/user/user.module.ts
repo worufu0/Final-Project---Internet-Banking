@@ -42,6 +42,7 @@ import { UserRepository } from './user.repository';
 import { AccountRepository } from '../account/account.repository';
 import { JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { EmployeeRepository } from '../employee/employee.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
@@ -52,6 +53,7 @@ import { JwtStrategy } from './jwt.strategy';
     JwtService,
     UserRepository,
     AccountRepository,
+    EmployeeRepository,
   ],
 })
 export class UserModule {}

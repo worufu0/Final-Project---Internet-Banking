@@ -11,12 +11,14 @@ import * as moment from 'moment';
 import { SALT_ROUNDS } from '../../../configs/constants/auth';
 import { User } from './entities/user.entity';
 import { BaseException } from '../../../vendors/exceptions/base.exception';
+import { EmployeeRepository } from '../employee/employee.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepository,
     private accountRepository: AccountRepository,
+    private employeeRepository: EmployeeRepository,
     private jwtService: JwtService,
   ) {}
 
@@ -173,6 +175,57 @@ export class UserService {
     userDb.expiredAt = moment(refreshToken.expiredAt * 1000).toDate();
 
     await this.userRepository.save(userDb);
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async validateEmployee(username: string, password: string): Promise<any> {
+    const employee = await this.employeeRepository.findOneBy({ username });
+    if (!employee) {
+      throw new BaseException(
+        USER_ERRORS.USER_NOT_FOUND.code,
+        USER_ERRORS.USER_NOT_FOUND.message,
+        null,
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    // compare encode password with old password
+    const passwordMatched = bcrypt.compareSync(password, employee.password);
+    if (passwordMatched) {
+      return {
+        username: employee.username,
+        id: employee.id,
+        role: employee.employeeRole,
+      };
+    }
+    throw new BaseException(
+      USER_ERRORS.WRONG_PASSWORD.code,
+      USER_ERRORS.WRONG_PASSWORD.message,
+      null,
+      HttpStatus.FORBIDDEN,
+    );
+  }
+
+  async loginEmployee(user: LoginInput) {
+    const employeeDb = await this.validateEmployee(
+      user.username,
+      user.password,
+    );
+
+    const payloadToken = {
+      username: employeeDb.username,
+      role: employeeDb.role,
+      id: employeeDb.id,
+    };
+    const accessToken = this.getAccessToken(payloadToken);
+    const refreshToken = this.getRefreshToken(payloadToken);
+
+    employeeDb.refreshToken = refreshToken.refreshToken;
+    employeeDb.expiredAt = moment(refreshToken.expiredAt * 1000).toDate();
+
+    await this.employeeRepository.save(employeeDb);
     return {
       accessToken,
       refreshToken,

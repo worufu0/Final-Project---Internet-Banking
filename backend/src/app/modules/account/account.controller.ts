@@ -28,7 +28,6 @@ export class AccountController extends BaseController {
     @Body() inputTransaction: CreateTransaction,
   ) {
     const auth = request.auth as User;
-    console.log('beng beng');
     const data = await this.accountService.createTransaction(
       auth,
       inputTransaction,

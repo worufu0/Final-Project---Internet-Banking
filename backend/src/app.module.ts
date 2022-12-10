@@ -14,6 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from './app/modules/account/account.module';
 import { ReceiverModule } from './app/modules/receiver/receiver.module';
 import { TransactionHistoryModule } from './app/modules/transaction-history/transaction-history.module';
+import { EmployeeModule } from './app/modules/employee/employee.module';
 import { ConfigModule } from '@nestjs/config';
 import { Logger } from './common/logger/logger';
 import dbConfig from './configs/db/mySql';
@@ -27,6 +28,7 @@ import { BaseException } from './vendors/exceptions/base.exception';
     TypeOrmModule.forRoot(dbConfig),
     AccountModule,
     ReceiverModule,
+    EmployeeModule,
     TransactionHistoryModule,
   ],
   controllers: [AppController],
