@@ -11,9 +11,12 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UserGuard extends AuthGuard('jwt') {
   constructor(private jwtService: JwtService) {
+    console.log('yaya');
     super();
   }
+
   canActivate(context: ExecutionContext) {
+    console.log('aaaa');
     try {
       const request = context.switchToHttp().getRequest();
       const token = request.headers.authorization.split(' ')[1];
