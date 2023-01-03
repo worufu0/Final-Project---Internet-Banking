@@ -95,8 +95,9 @@ export class UserController extends BaseController {
 
   @UseGuards(UserGuard)
   @Get('getListAccount')
-  async getListAccount(@Query() inputQuery) {
-    return this.response(await this.userService.getListAccount(inputQuery));
+  async getListAccount(@Req() request) {
+    const { id } = request.auth as User;
+    return this.response(await this.userService.getListAccount(id));
   }
 
   @Post('loginEmployee')

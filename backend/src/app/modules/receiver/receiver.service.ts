@@ -41,9 +41,8 @@ export class ReceiverService {
     }
 
     const newReceiver: CreateReceiverDto = {
-      accountNumber: receiver.accountNumber,
-      reminiscentName:
-        receiver.reminiscentName || queryReceiver?.user?.fullname,
+      accountNumber,
+      reminiscentName: reminiscentName || queryReceiver?.user?.fullname,
     };
 
     return await this.receiverRepository.saveRecipient(auth.id, newReceiver);

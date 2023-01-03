@@ -12,7 +12,7 @@ import {
 import { UserGuard } from '../../../vendors/guards/auth.guard';
 import { User } from '../user/entities/user.entity';
 import { AccountService } from './account.service';
-import { CreateTransaction } from './dto/create-transaction.dto';
+import { CreateTransaction, QueryAccount } from './dto/create-transaction.dto';
 import { BaseController } from '../../../vendors/base/base.controller';
 
 @Controller('account')
@@ -32,6 +32,13 @@ export class AccountController extends BaseController {
       auth,
       inputTransaction,
     );
+    return this.response(data);
+  }
+
+  @UseGuards(UserGuard)
+  @Get('getAccount')
+  async getAccount(@Req() input: QueryAccount) {
+    const data = await this.accountService.getAccount(input);
     return this.response(data);
   }
 

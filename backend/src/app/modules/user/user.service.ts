@@ -81,11 +81,11 @@ export class UserService {
     });
   }
 
-  getListAccount(inputQuery) {
+  getListAccount(id) {
     return this.accountRepository.find({
       where: {
         user: {
-          id: inputQuery.userId,
+          id,
         },
       },
     });

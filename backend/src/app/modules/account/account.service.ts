@@ -7,7 +7,7 @@ import { generateOTP } from '../../../app/utils/genarate-otp';
 import { TransactionHistoryRepository } from '../transaction-history/transaction-history.repository';
 import { User } from '../user/entities/user.entity';
 import { AccountRepository } from './account.repository';
-import { CreateTransaction } from './dto/create-transaction.dto';
+import { CreateTransaction, QueryAccount } from './dto/create-transaction.dto';
 import { OtpTransaction } from './entities/otp.entity';
 import { OtpTransactionRepository } from './otp.repository';
 import { BaseException } from '../../../vendors/exceptions/base.exception';
@@ -80,6 +80,12 @@ export class AccountService {
     return 'Transaction successfully';
   }
 
+  async getAccount(input: QueryAccount) {
+    return await this.accountRepository.findAccountByAccountNumber(
+      input.accountNumber,
+    );
+  }
+
   async getOtp(auth) {
     const generateOtp = generateOTP();
     const otpTransaction = new OtpTransaction();
@@ -88,6 +94,7 @@ export class AccountService {
     otpTransaction.type = OtpType.Transaction;
     otpTransaction.expire = moment().add(10, 'minutes').unix();
     await otpTransaction.save();
+    console.log(auth);
     await this.mailService.sendMail({
       to: auth.username,
       from: 'notolistore@gmail.com',

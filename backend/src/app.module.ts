@@ -20,6 +20,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Logger } from './common/logger/logger';
 import dbConfig from './configs/db/mySql';
 import { BaseException } from './vendors/exceptions/base.exception';
+import { PartnerBankModule } from './app/modules/partner-bank/partner-bank.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { BaseException } from './vendors/exceptions/base.exception';
     EmployeeModule,
     TransactionHistoryModule,
     DebtReminderModule,
+    PartnerBankModule,
   ],
   controllers: [AppController],
   providers: [AppService],

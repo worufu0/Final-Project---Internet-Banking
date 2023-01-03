@@ -4,3 +4,7 @@ export class CreateTransaction {
   otp: string;
   description: string;
 }
+
+export class QueryAccount {
+  accountNumber: string;
+}
