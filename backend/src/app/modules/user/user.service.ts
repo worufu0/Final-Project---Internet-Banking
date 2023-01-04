@@ -12,6 +12,10 @@ import { SALT_ROUNDS } from '../../../configs/constants/auth';
 import { User } from './entities/user.entity';
 import { BaseException } from '../../../vendors/exceptions/base.exception';
 import { EmployeeRepository } from '../employee/employee.repository';
+import { generateOTP } from '../../../app/utils/genarate-otp';
+import { OtpTransaction } from '../account/entities/otp.entity';
+import { OtpType } from '../../../configs/enum/otp';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UserService {
@@ -20,6 +24,7 @@ export class UserService {
     private accountRepository: AccountRepository,
     private employeeRepository: EmployeeRepository,
     private jwtService: JwtService,
+    private mailService: MailerService,
   ) {}
 
   /**
@@ -230,5 +235,52 @@ export class UserService {
       accessToken,
       refreshToken,
     };
+  }
+
+  async getOtResetPassword(email: string) {
+    const generateOtp = generateOTP();
+    const otpTransaction = new OtpTransaction();
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new BaseException(
+        'EMAIL_NOT_EXISTS',
+        'EMAIL_NOT_EXISTS',
+        null,
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    otpTransaction.user = user;
+    otpTransaction.otp = generateOtp;
+    otpTransaction.type = OtpType.ResetPassword;
+    otpTransaction.expire = moment().add(10, 'minutes').unix();
+    await otpTransaction.save();
+    await this.mailService.sendMail({
+      to: user.email,
+      from: 'notolistore@gmail.com',
+      subject: 'Meomeo Bank send OTP',
+      template: 'email-change-password',
+      context: {
+        data: {
+          fullname: user.fullname,
+          otp: generateOtp,
+        },
+      },
+    });
+    console.log('email: ', email);
+    return {
+      message: 'Success',
+    };
+  }
+
+  /**
+   * remove fresh token to make sure user can not genate new access token without password
+   * @param userId
+   * @returns
+   */
+  async logout(userId: any) {
+    return await this.userRepository.update(
+      { id: userId },
+      { refreshToken: null },
+    );
   }
 }

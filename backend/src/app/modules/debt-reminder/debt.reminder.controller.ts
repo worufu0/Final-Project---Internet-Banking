@@ -60,4 +60,20 @@ export class DebtReminderController extends BaseController {
     );
     return await this.response(response);
   }
+
+  @UseGuards(UserGuard)
+  @Get('realtimeDebtReminber')
+  async realtimeDebtReminber(@Req() request) {
+    const { id } = request;
+    const response = await this.debtReminderService.realtimeDebtReminber(id);
+    return await this.response(response);
+  }
+
+  @UseGuards(UserGuard)
+  @Post('payDebt')
+  async payDebt(@Body() body) {
+    const { debtId } = body;
+    const response = await this.debtReminderService.payDebt(debtId);
+    return await this.response(response);
+  }
 }

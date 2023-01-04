@@ -9,6 +9,7 @@ import * as path from 'path';
 import { OtpTransactionRepository } from '../account/otp.repository';
 import { TransactionHistoryRepository } from '../transaction-history/transaction-history.repository';
 import { UserRepository } from '../user/user.repository';
+import { AccountRepository } from '../account/account.repository';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UserRepository } from '../user/user.repository';
     UserRepository,
     OtpTransactionRepository,
     TransactionHistoryRepository,
+    AccountRepository,
     JwtService,
   ],
 })

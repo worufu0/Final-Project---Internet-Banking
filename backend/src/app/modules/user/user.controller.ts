@@ -111,4 +111,18 @@ export class UserController extends BaseController {
       tokenType: 'Bearer',
     };
   }
+
+  @Get('getOtpResetPassword')
+  async getOtpResetPasswprd(@Query() loginInput) {
+    const { email } = loginInput;
+    return await this.userService.getOtResetPassword(email);
+  }
+
+  @UseGuards(UserGuard)
+  @Get('logout')
+  async logout(@Req() request) {
+    const { id } = request.auth as User;
+    await this.userService.logout(id);
+    return this.response({ userId: id });
+  }
 }
