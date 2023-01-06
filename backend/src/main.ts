@@ -22,7 +22,7 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  const port = parseInt(process.env.APP_PORT, 10) || 3000;
+  const port = parseInt(process.env.APP_PORT, 10) || 4000;
   await app.listen(port, '0.0.0.0', () => {
     new Logger().log(`Service started successfully at port: ${port}`);
   });
