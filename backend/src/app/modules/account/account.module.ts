@@ -8,6 +8,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import * as path from 'path';
 import { OtpTransactionRepository } from './otp.repository';
 import { TransactionHistoryRepository } from '../transaction-history/transaction-history.repository';
+import { PartnerBankService } from '../partner-bank/partner-bank.service';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TransactionHistoryRepository } from '../transaction-history/transaction
   ],
   controllers: [AccountController],
   providers: [
+    PartnerBankService,
     AccountService,
     AccountRepository,
     OtpTransactionRepository,
