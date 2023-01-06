@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
+  Query,
 } from '@nestjs/common';
 import { PartnerBankService } from './partner-bank.service';
 import { AccountService } from '../account/account.service';
@@ -17,6 +19,7 @@ import { verifyOptions } from './verify-option';
 import { RsaGuard } from '../../../vendors/guards/rsa.guard';
 import { BaseController } from '../../../vendors/base/base.controller';
 import { InputAddCash } from './dto/input-add-cash.dto';
+import { AdminGuard } from '../../../vendors/guards/admin.guard';
 
 @Controller('partnerBank')
 export class PartnerBankController extends BaseController {
@@ -53,8 +56,22 @@ export class PartnerBankController extends BaseController {
 
   @UseGuards(RsaGuard)
   @Post('transaction')
-  async transaction(@Body() input: InputAddCash) {
-    await this.partnerBankService.addCash(input);
+  async transaction(@Req() request, @Body() input: InputAddCash) {
+    await this.partnerBankService.transaction(request, input);
     return this.response({});
+  }
+
+  @UseGuards(AdminGuard)
+  @Get('getListPartnerBank')
+  async getListPartnerBank() {
+    const data = await this.partnerBankService.getListPartnerBank();
+    return this.response(data);
+  }
+
+  @UseGuards(AdminGuard)
+  @Get('getHistoryPartnerBank')
+  async getHistoryPartnerBank(@Query() input) {
+    const data = await this.partnerBankService.getHistoryPartnerBank(input);
+    return this.response(data);
   }
 }

@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UserGuard } from '../../../vendors/guards/auth.guard';
 import { User } from '../user/entities/user.entity';
@@ -36,6 +37,20 @@ export class AccountController extends BaseController {
   }
 
   @UseGuards(UserGuard)
+  @Post('transactionPartner')
+  async transactionPartner(
+    @Req() request,
+    @Body() inputTransaction: CreateTransaction,
+  ) {
+    const auth = request.auth as User;
+    const data = await this.accountService.transactionPartner(
+      auth,
+      inputTransaction,
+    );
+    return this.response(data);
+  }
+
+  @UseGuards(UserGuard)
   @Get('getAccount')
   async getAccount(@Req() input: QueryAccount) {
     const data = await this.accountService.getAccount(input);
@@ -47,5 +62,11 @@ export class AccountController extends BaseController {
   getOtp(@Req() request) {
     const auth = request.auth as User;
     return this.accountService.getOtp(auth);
+  }
+
+  @UseGuards(UserGuard)
+  @Get('getInfoAccountPartner')
+  getInfoAccountPartner(@Query() input) {
+    return this.accountService.getInfoAccountPartner(input);
   }
 }

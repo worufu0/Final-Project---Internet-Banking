@@ -15,17 +15,13 @@ export class SecretGuard implements CanActivate {
     const getRequest = context.switchToHttp().getRequest();
     const timestamp = getRequest.query.timestamp;
     const currentTime = new Date().getTime();
-    console.log(getRequest.route.path);
-    console.log(timestamp);
-
-    if (currentTime - Number(timestamp) > 60000) {
+    if (currentTime - Number(timestamp) > 60000000) {
       throw new UnauthorizedException();
     }
     const hash = crypto
       .createHash('sha256')
       .update(getRequest.route.path + timestamp + process.env.SECRET_KEY)
       .digest('hex');
-    console.log('ehehe: ', getRequest.get('Authorization').split(' ')[1]);
     if (hash === getRequest.get('Authorization').split(' ')[1]) {
       return true;
     }

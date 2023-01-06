@@ -59,6 +59,70 @@ export class TransactionHistoryRepository extends Repository<TransactionHistory>
     });
   }
 
+  async getSender(auth) {
+    return await this.find({
+      where: {
+        from: {
+          id: auth.id,
+        },
+        type: TransactionType.TRANSFERS,
+      },
+      select: {
+        from: {
+          phone: true,
+          fullname: true,
+          email: true,
+        },
+        to: {
+          phone: true,
+          fullname: true,
+          email: true,
+        },
+        cash: true,
+        createdAt: true,
+      },
+      relations: {
+        to: true,
+        from: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
+  async getReceiver(auth) {
+    return await this.find({
+      where: {
+        to: {
+          id: auth.id,
+        },
+        type: TransactionType.TRANSFERS,
+      },
+      select: {
+        from: {
+          phone: true,
+          fullname: true,
+          email: true,
+        },
+        to: {
+          phone: true,
+          fullname: true,
+          email: true,
+        },
+        cash: true,
+        createdAt: true,
+      },
+      relations: {
+        to: true,
+        from: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
   async getPays(auth) {
     return await this.find({
       where: {

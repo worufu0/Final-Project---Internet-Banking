@@ -8,8 +8,8 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity('partnerbank')
-export class PartnerBank extends BaseEntity {
+@Entity('partner_history')
+export class PartnerHistory extends BaseEntity {
   @PrimaryGeneratedColumn('increment', { name: 'id' })
   id: number;
 
@@ -18,7 +18,6 @@ export class PartnerBank extends BaseEntity {
     type: 'varchar',
     length: 255,
     nullable: false,
-    unique: true,
   })
   nameBank: string;
 
@@ -27,9 +26,11 @@ export class PartnerBank extends BaseEntity {
     type: 'varchar',
     length: 255,
     nullable: false,
-    unique: true,
   })
   codeBank: string;
+
+  @Column({ name: 'price_transaction' })
+  priceTransaction: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

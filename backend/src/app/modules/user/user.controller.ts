@@ -112,6 +112,18 @@ export class UserController extends BaseController {
     };
   }
 
+  @Post('loginAdmin')
+  async loginAdmin(@Body() loginInput: LoginInput) {
+    const { accessToken, refreshToken } = await this.userService.loginAdmin(
+      loginInput,
+    );
+    return {
+      accessToken,
+      refreshToken,
+      tokenType: 'Bearer',
+    };
+  }
+
   @Get('getOtpResetPassword')
   async getOtpResetPasswprd(@Query() loginInput) {
     const { email } = loginInput;
