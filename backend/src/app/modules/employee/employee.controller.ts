@@ -12,6 +12,7 @@ import { EmployeeService } from '../employee/employee.service';
 import { PaymentInput } from './dto/paymentInput.dto';
 import { LoginInput } from './dto/login-input.dto';
 import { EmployeeGuard } from '../../../vendors/guards/employee.guard';
+import { AdminGuard } from '../../../vendors/guards/admin.guard';
 
 @Controller('employee')
 export class EmployeeController {
@@ -28,5 +29,11 @@ export class EmployeeController {
   getTransactionHistory(@Query() query) {
     const { userId } = query;
     return this.employeeService.getTransactionHistory(userId);
+  }
+
+  @UseGuards(AdminGuard)
+  @Get('getListEmloyee')
+  async getListEmloyee() {
+    return await this.employeeService.getListEmloyee();
   }
 }

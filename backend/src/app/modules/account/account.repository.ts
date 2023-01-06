@@ -9,6 +9,7 @@ export class AccountRepository extends Repository<Account> {
   }
 
   async findAccountByAccountNumber(accountNumber: string) {
+    console.log('account: ', accountNumber)
     return await this.findOne({
       select: {
         id: true,

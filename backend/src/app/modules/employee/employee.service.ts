@@ -34,15 +34,11 @@ export class EmployeeService {
   }
 
   async getTransactionHistory(id) {
-    const user = this.userRepository.findOneBy({ id });
-    const sender = await this.transactionHistoryRepository.getTransfers(
-      user,
-      'from',
-    );
+    const user = await this.userRepository.findOneBy({ id });
+    const sender = await this.transactionHistoryRepository.getSender(user);
 
-    const receiver = await this.transactionHistoryRepository.getTransfers(
-      user,
-      'to',
+    const receiver = await this.transactionHistoryRepository.getReceiver(
+      user
     );
 
     const pay = await this.transactionHistoryRepository.getPays(user);
@@ -52,5 +48,16 @@ export class EmployeeService {
       receiver,
       pay,
     };
+  }
+  
+  async getListEmloyee() {
+    return this.userRepository.find({
+      select: {
+        id: true,
+        email: true,
+        fullname: true,
+        phone: true
+      }
+    });
   }
 }

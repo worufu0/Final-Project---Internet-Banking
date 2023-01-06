@@ -16,6 +16,7 @@ import { generateOTP } from '../../../app/utils/genarate-otp';
 import { OtpTransaction } from '../account/entities/otp.entity';
 import { OtpType } from '../../../configs/enum/otp';
 import { MailerService } from '@nestjs-modules/mailer';
+import { EmployeeRole } from '../../../configs/enum/employee-role';
 
 @Injectable()
 export class UserService {
@@ -218,6 +219,39 @@ export class UserService {
       user.username,
       user.password,
     );
+
+    const payloadToken = {
+      username: employeeDb.username,
+      role: employeeDb.role,
+      id: employeeDb.id,
+    };
+    const accessToken = this.getAccessToken(payloadToken);
+    const refreshToken = this.getRefreshToken(payloadToken);
+
+    employeeDb.refreshToken = refreshToken.refreshToken;
+    employeeDb.expiredAt = moment(refreshToken.expiredAt * 1000).toDate();
+
+    await this.employeeRepository.save(employeeDb);
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async loginAdmin(user: LoginInput) {
+    const employeeDb = await this.validateEmployee(
+      user.username,
+      user.password,
+    );
+
+    if (employeeDb.role !== EmployeeRole.ADMINISTRATOR) {
+      throw new BaseException(
+        'ADMINISTRATOR_INVALID',
+        'ADMINISTRATOR_INVALID',
+        null,
+        HttpStatus.FORBIDDEN,
+      );
+    }
 
     const payloadToken = {
       username: employeeDb.username,
