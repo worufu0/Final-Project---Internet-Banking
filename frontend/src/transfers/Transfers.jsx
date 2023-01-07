@@ -7,7 +7,7 @@ export { Transfers };
 
 function Transfers() {
   const dispatch = useDispatch();
-  const [accountNumber, setAccountNumber] = useState('');
+  const [accountNumber, setAccountNumber] = useState(localStorage.getItem('accountNumber') || '');
   const [cash, setCash] = useState('');
   const [save, setSave] = useState(false);
   const [otp, setOtp] = useState('');
@@ -69,7 +69,7 @@ function Transfers() {
             onChange={handleOnChangeOtp}
           />
         </div>
-        <div class="form-group form-check">
+        <div className="form-group form-check">
           <input
             type="checkbox"
             className="form-check-input"

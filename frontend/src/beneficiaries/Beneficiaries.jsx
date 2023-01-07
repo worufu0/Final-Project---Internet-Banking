@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import { history } from '_helpers';
 import { receiverActions } from '_store';
 
 export { Beneficiaries };
@@ -9,6 +10,10 @@ function Beneficiaries() {
   const dispatch = useDispatch();
   const { accounts } = useSelector((x) => x.receivers);
 
+  const handleOnTransfers = (accountNumber) => {
+    localStorage.setItem('accountNumber', accountNumber);
+    history.navigate('/transfers');
+  };
   const handleOnDelete = async (accountNumber) => {
     await dispatch(receiverActions.deleteRecipient({ accountNumber }));
     await dispatch(receiverActions.getListRecipient());
@@ -34,8 +39,14 @@ function Beneficiaries() {
                   STK: {account.accountNumber} {account.reminiscentName}
                 </span>
                 <div className="d-flex">
-                  <button type="button" className="btn btn-success">
-                    Cập nhật
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={() => {
+                      handleOnTransfers(account.accountNumber);
+                    }}
+                  >
+                    Chuyển tiền
                   </button>
                   <button
                     type="button"
