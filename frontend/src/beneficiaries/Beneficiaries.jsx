@@ -12,6 +12,7 @@ function Beneficiaries() {
   const handleOnDelete = async (accountNumber) => {
     await dispatch(receiverActions.deleteRecipient({ accountNumber }));
     await dispatch(receiverActions.getListRecipient());
+    alert('Xoá người thụ hưởng thành công!');
   };
 
   useEffect(() => {

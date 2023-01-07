@@ -41,8 +41,8 @@ function createExtraActions() {
   function login() {
     return createAsyncThunk(
       `${name}/login`,
-      async ({ email, password }) =>
-        await fetchWrapper.post(`${baseUrl}/login`, { email, password })
+      async ({ username, password }) =>
+        await fetchWrapper.post(`${baseUrl}/login`, { username, password })
     );
   }
 }

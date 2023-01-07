@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { history } from '_helpers';
 import { accountActions, receiverActions } from '_store';
 
@@ -7,9 +7,9 @@ export { Transfers };
 
 function Transfers() {
   const dispatch = useDispatch();
-  const { otp: otpState } = useSelector((x) => x.accounts);
   const [accountNumber, setAccountNumber] = useState('');
   const [cash, setCash] = useState('');
+  const [save, setSave] = useState(false);
   const [otp, setOtp] = useState('');
 
   const handleOnChangeAccountNumber = (event) => {
@@ -18,13 +18,21 @@ function Transfers() {
   const handleOnChangeCash = (event) => {
     setCash(event.target.value);
   };
+  const handleOnChangeOtp = (event) => {
+    setOtp(event.target.value);
+  };
+  const handleOnChangeSave = (event) => {
+    setSave(event.target.value);
+  };
   const handleOnGetOtp = async () => {
     await dispatch(accountActions.getOtp());
-    console.log(otpState);
   };
   const handleOnSubmit = async (event) => {
     event.preventDefault();
+    if (save) await dispatch(receiverActions.saveRecipient({ accountNumber }));
     await dispatch(accountActions.createTransaction({ accountNumber, cash, otp }));
+    history.navigate('/');
+    alert('Chuyển tiền thành công !');
   };
 
   return (
@@ -53,7 +61,25 @@ function Transfers() {
         </div>
         <div className="form-group">
           <label htmlFor="cash">Mã OTP</label>
-          <input readOnly type="text" value={otp} className="form-control" id="otp" />
+          <input
+            type="text"
+            value={otp}
+            className="form-control"
+            id="otp"
+            onChange={handleOnChangeOtp}
+          />
+        </div>
+        <div class="form-group form-check">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="save"
+            value={save}
+            onChange={handleOnChangeSave}
+          />
+          <label className="form-check-label" htmlFor="save">
+            Lưu thông tin người nhận
+          </label>
         </div>
         <button type="button" className="btn btn-secondary" onClick={handleOnGetOtp}>
           Lấy mã OTP

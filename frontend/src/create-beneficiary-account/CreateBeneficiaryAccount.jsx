@@ -16,6 +16,7 @@ function CreateBeneficiaryAccount() {
     event.preventDefault();
     await dispatch(receiverActions.saveRecipient({ accountNumber }));
     history.navigate('/beneficiaries');
+    alert('Thêm mới người thụ hưởng thành công!');
   };
 
   return (

@@ -11,9 +11,7 @@ export const accountActions = { ...slice.actions, ...extraActions };
 export const accountsReducer = slice.reducer;
 
 function createInitialState() {
-  return {
-    otp: {},
-  };
+  return {};
 }
 
 function createExtraActions() {
@@ -41,22 +39,5 @@ function createExtraActions() {
 }
 
 function createExtraReducers() {
-  return {
-    ...getOtp(),
-  };
-
-  function getOtp() {
-    var { pending, fulfilled, rejected } = extraActions.getOtp;
-    return {
-      [pending]: (state) => {
-        state.otp = { loading: true };
-      },
-      [fulfilled]: (state, action) => {
-        state.otp = action.payload;
-      },
-      [rejected]: (state, action) => {
-        state.otp = { error: action.error };
-      },
-    };
-  }
+  return {};
 }
